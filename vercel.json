@@ -3,6 +3,34 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/toncenter/(.*)",
+      "destination": "https://toncenter.mytonwallet.org/$1"
+    },
+    {
+      "source": "/toncenter-testnet/(.*)",
+      "destination": "https://toncenter-testnet.mytonwallet.org/$1"
+    },
+    {
+      "source": "/tonapiio/(.*)",
+      "destination": "https://tonapiio.mytonwallet.org/$1"
+    },
+    {
+      "source": "/tonapiio-testnet/(.*)",
+      "destination": "https://tonapiio-testnet.mytonwallet.org/$1"
+    },
+    {
+      "source": "/mtw-api/(.*)",
+      "destination": "https://api.mytonwallet.org/$1"
+    },
+    {
+      "source": "/tronapi/(.*)",
+      "destination": "https://tronapi.mytonwallet.org/$1"
+    },
+    {
+      "source": "/tronapi-testnet/(.*)",
+      "destination": "https://api.shasta.trongrid.io/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

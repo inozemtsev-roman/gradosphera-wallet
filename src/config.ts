@@ -101,23 +101,53 @@ export const THEME_DEFAULT = 'system';
 
 export const MAIN_ACCOUNT_ID = '0-ton-mainnet';
 
-export const TONCENTER_MAINNET_URL = process.env.TONCENTER_MAINNET_URL || 'https://toncenter.mytonwallet.org';
+// The API services hosted on `*.mytonwallet.org` only allow CORS for `https://mytonwallet.app`.
+// For plain-web deployments on other domains we route API requests through a same-origin reverse
+// proxy (see `vercel.json`) so the CORS restriction doesn't apply.
+const IS_PLAIN_WEB_APP = !IS_CORE_WALLET && !IS_EXTENSION && !IS_PACKAGED_ELECTRON && !IS_CAPACITOR && !IS_TELEGRAM_APP;
+const PLAIN_WEB_ORIGIN = IS_PLAIN_WEB_APP
+  ? (typeof window !== 'undefined'
+    ? window.location.origin
+    : (typeof self !== 'undefined' ? self?.origin : undefined))
+  : undefined;
+
+function resolveApiUrl(envValue: string | undefined, proxyPath: string, fallbackUrl: string) {
+  return envValue || (PLAIN_WEB_ORIGIN ? `${PLAIN_WEB_ORIGIN}${proxyPath}` : fallbackUrl);
+}
+
+export const TONCENTER_MAINNET_URL = resolveApiUrl(
+  process.env.TONCENTER_MAINNET_URL, '/toncenter', 'https://toncenter.mytonwallet.org',
+);
 export const TONCENTER_MAINNET_KEY = process.env.TONCENTER_MAINNET_KEY;
 export const ELECTRON_TONCENTER_MAINNET_KEY = process.env.ELECTRON_TONCENTER_MAINNET_KEY;
-export const TONAPIIO_MAINNET_URL = process.env.TONAPIIO_MAINNET_URL || 'https://tonapiio.mytonwallet.org';
+export const TONAPIIO_MAINNET_URL = resolveApiUrl(
+  process.env.TONAPIIO_MAINNET_URL, '/tonapiio', 'https://tonapiio.mytonwallet.org',
+);
 
-export const TONCENTER_TESTNET_URL = process.env.TONCENTER_TESTNET_URL || 'https://toncenter-testnet.mytonwallet.org';
+export const TONCENTER_TESTNET_URL = resolveApiUrl(
+  process.env.TONCENTER_TESTNET_URL, '/toncenter-testnet', 'https://toncenter-testnet.mytonwallet.org',
+);
 export const TONCENTER_TESTNET_KEY = process.env.TONCENTER_TESTNET_KEY;
 export const ELECTRON_TONCENTER_TESTNET_KEY = process.env.ELECTRON_TONCENTER_TESTNET_KEY;
-export const TONAPIIO_TESTNET_URL = process.env.TONAPIIO_TESTNET_URL || 'https://tonapiio-testnet.mytonwallet.org';
+export const TONAPIIO_TESTNET_URL = resolveApiUrl(
+  process.env.TONAPIIO_TESTNET_URL, '/tonapiio-testnet', 'https://tonapiio-testnet.mytonwallet.org',
+);
 
-export const BRILLIANT_API_BASE_URL = process.env.BRILLIANT_API_BASE_URL || 'https://api.mytonwallet.org';
-export const PROXY_API_BASE_URL = process.env.PROXY_API_BASE_URL || 'https://api.mytonwallet.org/proxy';
+export const BRILLIANT_API_BASE_URL = resolveApiUrl(
+  process.env.BRILLIANT_API_BASE_URL, '/mtw-api', 'https://api.mytonwallet.org',
+);
+export const PROXY_API_BASE_URL = resolveApiUrl(
+  process.env.PROXY_API_BASE_URL, '/mtw-api/proxy', 'https://api.mytonwallet.org/proxy',
+);
 export const IPFS_GATEWAY_BASE_URL = 'https://ipfs.io/ipfs/';
 export const SSE_BRIDGE_URL = 'https://tonconnectbridge.mytonwallet.org/bridge/';
 
-export const TRON_MAINNET_API_URL = process.env.TRON_MAINNET_API_URL || 'https://tronapi.mytonwallet.org';
-export const TRON_TESTNET_API_URL = process.env.TRON_TESTNET_API_URL || 'https://api.shasta.trongrid.io';
+export const TRON_MAINNET_API_URL = resolveApiUrl(
+  process.env.TRON_MAINNET_API_URL, '/tronapi', 'https://tronapi.mytonwallet.org',
+);
+export const TRON_TESTNET_API_URL = resolveApiUrl(
+  process.env.TRON_TESTNET_API_URL, '/tronapi-testnet', 'https://api.shasta.trongrid.io',
+);
 
 export const FRACTION_DIGITS = 9;
 export const SHORT_FRACTION_DIGITS = 2;

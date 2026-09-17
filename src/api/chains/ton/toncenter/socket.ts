@@ -370,7 +370,7 @@ export function isActivityUpdateFinal(update: ActivitiesUpdate) {
 function getSocketUrl(network: ApiNetwork) {
   const url = new URL(network === 'testnet' ? TONCENTER_TESTNET_URL : TONCENTER_MAINNET_URL);
   url.protocol = 'wss:';
-  url.pathname = '/api/streaming/v1/ws';
+  url.pathname = `${url.pathname.replace(/\/+$/, '')}/api/streaming/v1/ws`;
   addBackendHeadersToSocketUrl(url);
   return url;
 }

@@ -169,6 +169,50 @@ export default function createConfig(
       devMiddleware: {
         stats: 'minimal',
       },
+      proxy: [
+        {
+          context: ['/toncenter'],
+          target: 'https://toncenter.mytonwallet.org',
+          pathRewrite: { '^/toncenter': '' },
+          changeOrigin: true,
+        },
+        {
+          context: ['/toncenter-testnet'],
+          target: 'https://toncenter-testnet.mytonwallet.org',
+          pathRewrite: { '^/toncenter-testnet': '' },
+          changeOrigin: true,
+        },
+        {
+          context: ['/tonapiio'],
+          target: 'https://tonapiio.mytonwallet.org',
+          pathRewrite: { '^/tonapiio': '' },
+          changeOrigin: true,
+        },
+        {
+          context: ['/tonapiio-testnet'],
+          target: 'https://tonapiio-testnet.mytonwallet.org',
+          pathRewrite: { '^/tonapiio-testnet': '' },
+          changeOrigin: true,
+        },
+        {
+          context: ['/mtw-api'],
+          target: 'https://api.mytonwallet.org',
+          pathRewrite: { '^/mtw-api': '' },
+          changeOrigin: true,
+        },
+        {
+          context: ['/tronapi'],
+          target: 'https://tronapi.mytonwallet.org',
+          pathRewrite: { '^/tronapi': '' },
+          changeOrigin: true,
+        },
+        {
+          context: ['/tronapi-testnet'],
+          target: 'https://api.shasta.trongrid.io',
+          pathRewrite: { '^/tronapi-testnet': '' },
+          changeOrigin: true,
+        },
+      ],
       headers: {
         'Content-Security-Policy': CSP,
       },
