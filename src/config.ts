@@ -126,7 +126,6 @@ export const MAX_PUSH_NOTIFICATIONS_ACCOUNT_COUNT = 3;
 
 export const SUPPORT_USERNAME = 'mysupport';
 export const MTW_TIPS_CHANNEL_NAME: Partial<Record<LangCode, string>> = {
-  en: 'MyTonWalletTips',
   ru: 'MyTonWalletTipsRu',
 };
 export const NFT_MARKETPLACE_TITLES: Record<ApiNftMarketplace, string> = {
@@ -163,57 +162,12 @@ export const PROXY_HOSTS = process.env.PROXY_HOSTS;
 export const TINY_TRANSFER_MAX_COST = 0.01;
 
 export const IMAGE_CACHE_NAME = 'mtw-image';
-export const LANG_CACHE_NAME = 'mtw-lang-226';
+export const LANG_CACHE_NAME = 'mtw-lang-227';
 
 export const LANG_LIST: LangItem[] = [{
-  langCode: 'en',
-  name: 'English',
-  nativeName: 'English',
-  rtl: false,
-}, {
-  langCode: 'es',
-  name: 'Spanish',
-  nativeName: 'Español',
-  rtl: false,
-}, {
   langCode: 'ru',
   name: 'Russian',
   nativeName: 'Русский',
-  rtl: false,
-}, {
-  langCode: 'zh-Hans',
-  name: 'Chinese (Simplified)',
-  nativeName: '简体',
-  rtl: false,
-}, {
-  langCode: 'zh-Hant',
-  name: 'Chinese (Traditional)',
-  nativeName: '繁體',
-  rtl: false,
-}, {
-  langCode: 'tr',
-  name: 'Turkish',
-  nativeName: 'Türkçe',
-  rtl: false,
-}, {
-  langCode: 'de',
-  name: 'German',
-  nativeName: 'Deutsch',
-  rtl: false,
-}, {
-  langCode: 'th',
-  name: 'Thai',
-  nativeName: 'ไทย',
-  rtl: false,
-}, {
-  langCode: 'uk',
-  name: 'Ukrainian',
-  nativeName: 'Українська',
-  rtl: false,
-}, {
-  langCode: 'pl',
-  name: 'Polish',
-  nativeName: 'Polski',
   rtl: false,
 }];
 

@@ -6,8 +6,6 @@ import React from '../lib/teact/teact';
 import TeactDOM from '../lib/teact/teact-dom';
 import { getActions, getGlobal } from '../global';
 
-import type { LangCode } from '../global/types';
-
 import { ANIMATION_LEVEL_DEFAULT, DEBUG, IS_TELEGRAM_APP, STRICTERDOM_ENABLED, THEME_DEFAULT } from '../config';
 import { requestMutation } from '../lib/fasterdom/fasterdom';
 import { enableStrict } from '../lib/fasterdom/stricterdom';
@@ -16,7 +14,7 @@ import { forceLoadFonts } from '../util/fonts';
 import { setLanguage } from '../util/langProvider';
 import { logSelfXssWarnings } from '../util/logs';
 import switchTheme, { setStatusBarStyle } from '../util/switchTheme';
-import { getTelegramApp, initTelegramApp } from '../util/telegram';
+import { initTelegramApp } from '../util/telegram';
 import { setEnvironment } from '../api/environment';
 
 import App from './components/App';
@@ -53,10 +51,7 @@ void (() => {
   actions.setTheme({ theme: THEME_DEFAULT });
   switchTheme(THEME_DEFAULT);
 
-  const langCode = getTelegramApp()?.initDataUnsafe.user?.language_code;
-  if (langCode) {
-    void setLanguage(langCode as LangCode);
-  }
+  void setLanguage('ru');
 
   if (DEBUG) {
     // eslint-disable-next-line no-console

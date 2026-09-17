@@ -31,7 +31,7 @@ const formatDayToStringWithCache = withCache((
 });
 
 export function formatRelativeHumanDateTime(
-  langCode: LangCode = 'en',
+  langCode: LangCode = 'ru',
   time: number,
 ) {
   const total = time - Date.now();

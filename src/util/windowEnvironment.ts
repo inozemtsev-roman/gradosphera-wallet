@@ -1,7 +1,7 @@
 import type { LangCode } from '../global/types';
 
 import {
-  IS_CAPACITOR, IS_CORE_WALLET, IS_EXTENSION, IS_FIREFOX_EXTENSION, IS_TELEGRAM_APP, LANG_LIST,
+  IS_CAPACITOR, IS_CORE_WALLET, IS_EXTENSION, IS_FIREFOX_EXTENSION, IS_TELEGRAM_APP,
 } from '../config';
 import { requestForcedReflow } from '../lib/fasterdom/fasterdom';
 import { DETACHED_TAB_URL } from './ledger/tab';
@@ -17,14 +17,7 @@ function isIPad() {
 }
 
 function getBrowserLanguage(): LangCode {
-  if (IS_CORE_WALLET) return 'en';
-
-  const { language } = navigator;
-  const lang = language.startsWith('zh')
-    ? (language.endsWith('TW') || language.endsWith('HK') ? 'zh-Hant' : 'zh-Hans')
-    : language.substring(0, 2);
-
-  return (LANG_LIST.some(({ langCode }) => langCode === lang) ? lang : 'en') as LangCode;
+  return 'ru';
 }
 
 export const IS_PWA = (

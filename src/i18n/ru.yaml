@@ -112,6 +112,7 @@ $logout_without_backup_warning: Резервная копия кошелька �
 $logout_accounts_without_backup_warning: Резервная копия не была создана для %links%. Если вы продолжите выход, доступ **может быть утерян**.
 $logout_warning: Кошелёк будет удалён только **на этом устройстве**. Убедитесь, что у вас есть резервная копия ваших **секретных слов**.
 $logout_confirm: Выйти из **всех** кошельков
+$logout_warning2: Кошельки находятся в децентрализованном блокчейне TON. Чтобы удалить кошелёк, просто переведите с него весь TON и оставьте его пустым.
 Your address was copied!: Адрес скопирован!
 Create Deposit Link: Ссылка на депозит
 $receive_invoice_description: |
@@ -266,6 +267,7 @@ Invalid address: Некорректный адрес
 Domain is not connected to a wallet: Домен не подключён к кошельку
 Unexpected error: Ошибочка вышла
 Unexpected Error: Непредвиденная ошибка
+Unexpected: Ошибочка вышла
 Earn: Стейкинг
 Earning: Стейкинг
 You can save this address for quick access while sending.: Вы можете сохранить этот адрес для быстрого доступа при отправке.
@@ -478,6 +480,8 @@ US Dollar: Доллар США
 Euro: Евро
 Ruble: Рубль
 Yuan: Юань
+Bitcoin: Биткоин
+Toncoin: Toncoin
 $max_balance: "Максимум: %balance%"
 $unstake_information_instantly: Вы получите свой депозит мгновенно
 Select Token: Выбрать токен

@@ -636,7 +636,7 @@ function Settings({
               )}
               <div className={styles.block}>
                 <a
-                  href={`https://t.me/${MTW_TIPS_CHANNEL_NAME[langCode] ?? MTW_TIPS_CHANNEL_NAME.en}`}
+                  href={`https://t.me/${MTW_TIPS_CHANNEL_NAME[langCode] ?? MTW_TIPS_CHANNEL_NAME.ru}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.item}
