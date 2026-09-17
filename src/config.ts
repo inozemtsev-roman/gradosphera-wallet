@@ -112,7 +112,10 @@ const PLAIN_WEB_ORIGIN = IS_PLAIN_WEB_APP
   : undefined;
 
 function resolveApiUrl(envValue: string | undefined, proxyPath: string, fallbackUrl: string) {
-  return envValue || (PLAIN_WEB_ORIGIN ? `${PLAIN_WEB_ORIGIN}${proxyPath}` : fallbackUrl);
+  if (IS_PLAIN_WEB_APP) {
+    return PLAIN_WEB_ORIGIN ? `${PLAIN_WEB_ORIGIN}${proxyPath}` : fallbackUrl;
+  }
+  return envValue || fallbackUrl;
 }
 
 export const TONCENTER_MAINNET_URL = resolveApiUrl(
