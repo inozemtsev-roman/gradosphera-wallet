@@ -143,7 +143,7 @@ export const PROXY_API_BASE_URL = resolveApiUrl(
   process.env.PROXY_API_BASE_URL, '/mtw-api/proxy', 'https://api.mytonwallet.org/proxy',
 );
 export const IPFS_GATEWAY_BASE_URL = 'https://ipfs.io/ipfs/';
-export const SSE_BRIDGE_URL = 'https://tonconnectbridge.mytonwallet.org/bridge/';
+export const SSE_BRIDGE_URL = process.env.SSE_BRIDGE_URL || 'https://tonconnectbridge.mytonwallet.org/bridge/';
 
 export const TRON_MAINNET_API_URL = resolveApiUrl(
   process.env.TRON_MAINNET_API_URL, '/tronapi', 'https://tronapi.mytonwallet.org',

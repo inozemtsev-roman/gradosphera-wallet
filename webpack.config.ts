@@ -394,6 +394,7 @@ export default function createConfig(
       new EnvironmentPlugin({
         APP_ENV: 'production',
         APP_NAME: '',
+        SSE_BRIDGE_URL: '',
         APP_VERSION: appVersion,
         APP_COMMIT_HASH: appCommitHash ?? '',
         TEST_SESSION: '',

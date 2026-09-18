@@ -1,0 +1,16 @@
+{
+  "app_name": "gradospherawallet",
+  "name": "Gradosphera Wallet",
+  "image": "https://gradosphera-wallet.vercel.app/tonconnect-icon.png",
+  "about_url": "https://gradosphera-wallet.vercel.app",
+  "universal_url": "https://gradosphera-wallet.vercel.app/ton-connect",
+  "deepLink": "gradosphera-tc://",
+  "bridge": [
+    { "type": "sse", "url": "https://gradosphera-tonconnect-bridge.dao-f7d.workers.dev/bridge" }
+  ],
+  "platforms": ["chrome", "firefox", "safari", "windows", "macos", "linux"],
+  "features": [
+    { "name": "SendTransaction", "maxMessages": 4 },
+    { "name": "SignData", "types": ["text", "binary", "cell"] }
+  ]
+}
