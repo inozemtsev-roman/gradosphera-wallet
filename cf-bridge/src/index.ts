@@ -113,7 +113,22 @@ export default {
         });
       }
       const stub = env.BRIDGE.get(env.BRIDGE.idFromName(to.toLowerCase()));
-      return stub.fetch(request);
+
+      let bodyText: string;
+      try {
+        bodyText = await readBodyLimited(request, MAX_BODY_BYTES);
+      } catch (error) {
+        if (error instanceof BodyTooLargeError) {
+          return new Response('Message too large', { status: 413, headers: corsHeaders() });
+        }
+        throw error;
+      }
+      const doRequest = new Request(request.url, {
+        method: 'POST',
+        headers: request.headers,
+        body: bodyText,
+      });
+      return stub.fetch(doRequest);
     }
 
     return new Response('gradosphera tonconnect bridge: use GET /events or POST /message', {
@@ -179,7 +194,6 @@ export class BridgeClient extends DurableObject<Environment> {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-store',
-        Connection: 'keep-alive',
         ...Object.fromEntries(corsHeaders()),
       },
     });

@@ -42,7 +42,10 @@ SSE bridge для TonConnect (протокол `spec/bridge.md`) на Cloudflare
 
 ## Быстрый старт
 
+Требуется Node.js ≥ 22 (в `cf-bridge/` есть `.nvmrc`):
+
 ```bash
+nvm use          # подхватит версию из .nvmrc
 cd cf-bridge
 npm install
 npm run dev                 # http://localhost:8787

@@ -1,7 +1,6 @@
 name = "gradosphera-tonconnect-bridge"
 main = "src/index.ts"
 compatibility_date = "2025-02-25"
-compatibility_flags = ["nodejs_compat"]
 
 # Local: http://localhost:8787
 # Prod: https://gradosphera-tonconnect-bridge.<your-account>.workers.dev (or a custom domain)
