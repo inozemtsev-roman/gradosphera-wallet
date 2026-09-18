@@ -4,6 +4,11 @@ Wallet слушает SSE-мост, задаваемый `SSE_BRIDGE_URL` (`src/
 Dapp'ы выбирают bridge из записи в [ton-connect/wallets-list](https://github.com/ton-connect/wallets-list), а не из конфига кошелька —
 поэтому для работы «конца в конец» должны совпасть обе стороны.
 
+Кошелёк автоматически распознаёт TonConnect universal-ссылку при запуске: при открытии
+`https://grafosphera-wallet.vercel.app/ton-connect?v=...&id=...&r=...&ret=...`
+приложение само вызывает `startSseConnection` и показывает экран подтверждения подключения
+(`isUniversalTonConnectUrl` в `src/util/deeplink/index.ts`).
+
 ## Обязательное условие согласования
 
 `device.appName`, который кошелёк шлёт в `ConnectEventSuccess`, берётся из `APP_NAME` (env).

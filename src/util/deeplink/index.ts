@@ -82,6 +82,15 @@ export function processDeeplink(url: string, isFromInAppBrowser = false): Promis
   }
 }
 
+// Processes a TonConnect universal link provided when the app is launched with parameters
+export function processLaunchDeeplink() {
+  const url = forceHttpsProtocol(window.location.href);
+  if (isTonConnectDeeplink(url) || isSelfDeeplink(url)) {
+    return processDeeplink(url);
+  }
+  return false;
+}
+
 export function isTonDeeplink(url: string) {
   return url.startsWith(TON_PROTOCOL);
 }
@@ -240,7 +249,17 @@ function rawParseTonDeeplink(value?: string) {
 function isTonConnectDeeplink(url: string) {
   return url.startsWith(TONCONNECT_PROTOCOL)
     || url.startsWith(TONCONNECT_PROTOCOL_SELF)
-    || omitProtocol(url).startsWith(omitProtocol(TONCONNECT_UNIVERSAL_URL));
+    || omitProtocol(url).startsWith(omitProtocol(TONCONNECT_UNIVERSAL_URL))
+    || isUniversalTonConnectUrl(url);
+}
+
+function isUniversalTonConnectUrl(url: string) {
+  try {
+    const { searchParams } = new URL(forceHttpsProtocol(url));
+    return searchParams.has('v') && searchParams.has('id') && searchParams.has('r');
+  } catch {
+    return false;
+  }
 }
 
 // Returns `true` if the link has been processed, ideally resulting to a UI action

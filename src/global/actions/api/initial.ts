@@ -1,4 +1,5 @@
 import { DEFAULT_PRICE_CURRENCY, IS_EXTENSION } from '../../../config';
+import { processLaunchDeeplink } from '../../../util/deeplink';
 import { logDebug } from '../../../util/logs';
 import {
   IS_ANDROID_APP, IS_DELEGATED_BOTTOM_SHEET, IS_ELECTRON, IS_IOS_APP,
@@ -18,6 +19,8 @@ addActionHandler('initApi', async (global, actions) => {
     referrer: new URLSearchParams(window.location.search).get('r') ?? undefined,
     accountIds,
   });
+
+  void processLaunchDeeplink();
 
   await callApi('waitDataPreload');
 
