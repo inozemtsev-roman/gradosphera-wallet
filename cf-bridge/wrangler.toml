@@ -1,0 +1,21 @@
+name = "gradosphera-tonconnect-bridge"
+main = "src/index.ts"
+compatibility_date = "2025-02-25"
+compatibility_flags = ["nodejs_compat"]
+
+# Local: http://localhost:8787
+# Prod: https://gradosphera-tonconnect-bridge.<your-account>.workers.dev (or a custom domain)
+
+[durable_objects]
+bindings = [
+  { name = "BRIDGE", class_name = "BridgeClient" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["BridgeClient"]
+
+# Custom domain route (uncomment + set your domain, fully managed by Cloudflare):
+# routes = [
+#   { pattern = "bridge.example.com", custom_domain = true },
+# ]

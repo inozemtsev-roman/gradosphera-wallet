@@ -1,0 +1,16 @@
+{
+  "name": "gradosphera-tonconnect-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.0.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^4.10.0"
+  }
+}

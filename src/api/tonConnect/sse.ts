@@ -31,7 +31,7 @@ const TTL_SEC = 300;
 const NONCE_SIZE = 24;
 const MAX_CONFIRM_DURATION = 60 * 1000;
 
-let sseEventSource: EventSource | undefined;
+let sseEventSources: EventSource[] = [];
 let sseDapps: SseDapp[] = [];
 let delayedReturnParams: {
   validUntil: number;
@@ -173,54 +173,56 @@ export async function resetupSseConnection() {
     return;
   }
 
-  closeEventSource();
-  sseEventSource = openEventSource(clientIds, lastEventId);
+  closeEventSources();
+  sseEventSources = openEventSources(clientIds, lastEventId);
 
-  sseEventSource.onopen = () => {
-    logDebug('EventSource opened');
-  };
-
-  sseEventSource.onerror = (e) => {
-    logDebugError('EventSource', e.type);
-  };
-
-  sseEventSource.onmessage = async (event) => {
-    const { from, message: encryptedMessage } = JSON.parse(event.data);
-
-    const sseDapp = sseDapps.find(({ appClientId }) => appClientId === from);
-    if (!sseDapp) {
-      logDebug(`Dapp with clientId ${from} not found`);
-      return;
-    }
-
-    const {
-      accountId, clientId, appClientId, secretKey, url, lastOutputId,
-    } = sseDapp;
-    const message = decryptMessage(encryptedMessage, appClientId, secretKey) as AppRequest<keyof RpcRequests>;
-
-    logDebug('SSE Event:', message);
-
-    await setSseLastEventId(event.lastEventId);
-    const sseOptions = {
-      clientId,
-      appClientId,
-      secretKey,
-      lastOutputId,
+  sseEventSources.forEach((eventSource) => {
+    eventSource.onopen = () => {
+      logDebug('EventSource opened');
     };
 
-    // @ts-ignore
-    const result = await tonConnect[message.method]({ url, accountId, sseOptions }, message);
+    eventSource.onerror = (e) => {
+      logDebugError('EventSource', e.type);
+    };
 
-    await sendMessage(result, secretKey, clientId, appClientId);
+    eventSource.onmessage = async (event) => {
+      const { from, message: encryptedMessage } = JSON.parse(event.data);
 
-    if (delayedReturnParams) {
-      const { validUntil, url, isFromInAppBrowser } = delayedReturnParams;
-      if (validUntil > Date.now()) {
-        onUpdate({ type: 'openUrl', url, isExternal: !isFromInAppBrowser });
+      const sseDapp = sseDapps.find(({ appClientId }) => appClientId === from);
+      if (!sseDapp) {
+        logDebug(`Dapp with clientId ${from} not found`);
+        return;
       }
-      delayedReturnParams = undefined;
-    }
-  };
+
+      const {
+        accountId, clientId, appClientId, secretKey, url, lastOutputId,
+      } = sseDapp;
+      const message = decryptMessage(encryptedMessage, appClientId, secretKey) as AppRequest<keyof RpcRequests>;
+
+      logDebug('SSE Event:', message);
+
+      await setSseLastEventId(event.lastEventId);
+      const sseOptions = {
+        clientId,
+        appClientId,
+        secretKey,
+        lastOutputId,
+      };
+
+      // @ts-ignore
+      const result = await tonConnect[message.method]({ url, accountId, sseOptions }, message);
+
+      await sendMessage(result, secretKey, clientId, appClientId);
+
+      if (delayedReturnParams) {
+        const { validUntil, url, isFromInAppBrowser } = delayedReturnParams;
+        if (validUntil > Date.now()) {
+          onUpdate({ type: 'openUrl', url, isExternal: !isFromInAppBrowser });
+        }
+        delayedReturnParams = undefined;
+      }
+    };
+  });
 }
 
 export async function sendSseDisconnect(accountId: string, url: string) {
@@ -260,22 +262,24 @@ async function sendRawMessage(body: string, clientId: string, toId: string, topi
   await handleFetchErrors(response);
 }
 
-function closeEventSource() {
-  if (!sseEventSource) return;
-
-  safeExec(() => {
-    sseEventSource!.close();
+function closeEventSources() {
+  sseEventSources.forEach((eventSource) => {
+    safeExec(() => {
+      eventSource.close();
+    });
   });
-  sseEventSource = undefined;
+  sseEventSources = [];
 }
 
-function openEventSource(clientIds: string[], lastEventId?: string) {
-  const url = new URL(`${SSE_BRIDGE_URL}events`);
-  url.searchParams.set('client_id', clientIds.join(','));
-  if (lastEventId) {
-    url.searchParams.set('last_event_id', lastEventId);
-  }
-  return new EventSource(url);
+function openEventSources(clientIds: string[], lastEventId?: string) {
+  return clientIds.filter(Boolean).map((clientId) => {
+    const url = new URL(`${SSE_BRIDGE_URL}events`);
+    url.searchParams.set('client_id', clientId);
+    if (lastEventId) {
+      url.searchParams.set('last_event_id', lastEventId);
+    }
+    return new EventSource(url);
+  });
 }
 
 function encryptMessage(message: Uint8Array, publicKey: string, secretKey: string) {

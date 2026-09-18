@@ -26,5 +26,7 @@ export default tseslint.config(
     'dist',
     'dist-electron',
     'docs',
+    'cf-bridge',
+    '.kilo',
   ]),
 );
