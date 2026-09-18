@@ -3,6 +3,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/bridge/(.*)",
+      "destination": "https://gradosphera-tonconnect-bridge.dao-f7d.workers.dev/bridge/$1"
+    },
+    {
       "source": "/toncenter/(.*)",
       "destination": "https://toncenter.mytonwallet.org/$1"
     },
