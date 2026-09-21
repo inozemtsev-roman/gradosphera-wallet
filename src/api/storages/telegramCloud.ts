@@ -1,91 +1,52 @@
-import type { StorageKey, Storage } from './types';
+import { StorageKey, Storage, serializeValue, deserializeValue } from './telegramCloudTypes';
 
-import { callWindow } from '../../util/windowProvider/connector';
+const TG_STORAGE_PREFIX = 'tc:';
 
-// Telegram WebApp CloudStorage per-key limit is 4096 bytes; values above ignored
-// for the mirror (IndexedDB remains the source of truth in the same webview session).
-const CRITICAL_KEYS = new Set<StorageKey>([
-  'accounts',
-  'currentAccountId',
-  'stateVersion',
-  'publicKeys',
-  'mnemonicsEncrypted',
-]);
-
-function parseValue(value: string | undefined): any {
-  return value === undefined ? value : JSON.parse(value);
+function tgKey(name: StorageKey, slot: string): string {
+  return `${TG_STORAGE_PREFIX}${slot}${name}`;
 }
 
-function serializeValue(value: any): string {
-  return typeof value === 'string' ? value : JSON.stringify(value);
-}
+export class TelegramCloudMirror implements Storage {
+  private readonly cloud: StoragePort;
 
-function isAvailable() {
-  return Boolean((self as any).windowProvider);
-}
+  constructor(cloud: StoragePort) {
+    this.cloud = cloud;
+  }
 
-export function setTelegramCloudStorageBackend(backend: Storage) {
-  (self as any).windowProvider = { telegramCloudStorage: backend };
-  (self as any).windowProviderAvailable = Boolean(backend);
-}
+  setItem(name: StorageKey, value: unknown): Promise<void> {
+    const serialized = serializeValue(value);
+    const chunks = splitChunks(serialized);
+    return Promise.all(chunks.map((chunk, i) => this.cloud.setItem(tgKey(name, String(i)), chunk))).then(() => undefined);
+  }
 
-export function isTelegramCloudStorageAvailable() {
-  return isAvailable();
-}
-
-export const telegramCloudStorage: Storage = {
-  async getItem(name: StorageKey, force?: boolean) {
-    if (!isAvailable()) return undefined; // (no-op outside Telegram)
-    const value = await callWindow('telegramCloudStorageGetItem', name, force);
-    return parseValue(value);
-  },
-
-  setItem(name: StorageKey, value: any) {
-    if (!isAvailable()) return Promise.resolve();
-    let normalized: string | undefined;
-    if (CRITICAL_KEYS.has(name)) {
-      normalized = serializeValue(value);
-      if (normalized.length > 4096) return Promise.resolve(); // too big for CloudStorage
-    }
-    return callWindow('telegramCloudStorageSetItem', name, normalized ?? JSON.stringify(value)).then(() => undefined);
-  },
-
-  removeItem(name: StorageKey) {
-    if (!isAvailable()) return Promise.resolve();
-    return callWindow('telegramCloudStorageRemoveItem', name);
-  },
-
-  clear() {
-    if (!isAvailable()) return Promise.resolve();
-    return callWindow('telegramCloudStorageClear');
-  },
-
-  getMany(keys: StorageKey[]) {
-    if (!isAvailable()) return Promise.resolve({});
-    return callWindow('telegramCloudStorageGetMany', keys).then((values: Record<string, any>) => {
-      const result: Record<string, any> = {};
-      for (const [key, value] of Object.entries(values)) {
-        result[key] = parseValue(value);
-      }
-      return result;
+  getItem(name: StorageKey): Promise<unknown> {
+    return Promise.all([0, 1, 2, 3].map((i) => this.cloud.getItem(tgKey(name, String(i))))).then((chunks) => {
+      const serialized = joinChunks(chunks);
+      return serialized === undefined ? undefined : deserializeValue(serialized);
     });
-  },
+  }
 
-  getAll() {
-    if (!isAvailable()) return Promise.resolve({});
-    return callWindow('telegramCloudStorageGetAll');
-  },
+  removeItem(name: StorageKey): Promise<void> {
+    return [0, 1, 2, 3].reduce((pr, i) => pr.then(() => this.cloud.removeItem(tgKey(name, String(i)))), Promise.resolve());
+  }
 
-  setMany(items: Record<StorageKey, any>) {
-    if (!isAvailable()) return Promise.resolve();
-    const mapped: Record<string, string | undefined> = {};
-    for (const [key, value] of Object.entries(items)) {
-      if (CRITICAL_KEYS.has(key as StorageKey)) {
-        const normalized = serializeValue(value);
-        if (normalized.length > 4096) continue; // too big for CloudStorage
-        mapped[key] = normalized;
-      }
-    }
-    return callWindow('telegramCloudStorageSetMany', mapped);
-  },
-};
+  clear(): Promise<void> { return Promise.resolve(); }
+
+  getMany(keys: StorageKey[]): Promise<Record<string, unknown>> {
+    return Promise.all(keys.map((key) => this.getItem(key)
+      .then((value) => [key, { [key]: value }] as const))).then((entries) => Object.assign({}, ...entries.map((e) => e[1])));
+  }
+
+  getManyFull(): Promise<Record<string, unknown>> { return this.getMany([]).then(() => ({})); }
+}
+
+function splitChunks(serialized: string): string[] {
+  const CHUNK_SIZE = 3760 * 2; // CloudStorage ~4096B/key; keep margin for JSON wrapper
+  return serialized.length <= CHUNK_SIZE ? [serialized] : [serialized.slice(0, CHUNK_SIZE), serialized.slice(CHUNK_SIZE)];
+}
+
+function joinChunks(chunks: string[]): string | undefined {
+  const first = chunks[0];
+  const second = chunks[1];
+  return first === undefined ? undefined : second === undefined ? first : first + second;
+}
