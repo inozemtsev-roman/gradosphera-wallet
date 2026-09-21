@@ -146,7 +146,7 @@
     "css-loader": "7.1.2",
     "css-minimizer-webpack-plugin": "7.0.2",
     "dotenv": "16.5.0",
-    "electron": "36.2.1",
+    "electron": "44.4.3",
     "electron-builder": "26.0.12",
     "electron-context-menu": "4.1.0",
     "electron-updater": "6.6.2",
@@ -159,7 +159,7 @@
     "jest": "29.7.0",
     "jest-environment-jsdom": "29.7.0",
     "jest-raw-loader": "1.0.1",
-    "js-yaml": "4.1.0",
+    "js-yaml": "4.3.2",
     "lint-staged": "16.0.0",
     "mini-css-extract-plugin": "2.9.2",
     "postcss": "8.5.3",
@@ -181,7 +181,7 @@
     "stylelint-order": "7.0.0",
     "typescript": "5.8.3",
     "typescript-eslint": "8.32.1",
-    "webpack": "5.99.9",
+    "webpack": "5.111.1",
     "webpack-dev-server": "5.2.1"
   },
   "dependencies": {
