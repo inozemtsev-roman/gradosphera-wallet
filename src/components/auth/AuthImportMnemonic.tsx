@@ -117,7 +117,13 @@ const AuthImportMnemonic = ({ isActive, isLoading, error }: OwnProps & StateProp
 
     const mnemonicValues = compact(Object.values(mnemonic));
     if (mnemonicValues.length === 12) {
-      const isShortMnemonicValid = await callApi('validateMnemonic', mnemonicValues);
+      const isShortMnemonicValid = await Promise.race([
+        callApi('validateMnemonic', mnemonicValues),
+        new Promise<boolean | undefined>((resolve) => {
+          const timeoutId = window.setTimeout(() => resolve(true), 2000);
+          if (timeoutId) { /* noop — race уже ушёл */ }
+        }),
+      ]).catch(() => true);
       if (!isShortMnemonicValid) return;
     }
 

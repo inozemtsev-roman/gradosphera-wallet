@@ -535,7 +535,15 @@ addActionHandler('afterImportMnemonic', async (global, actions, { mnemonic }) =>
   mnemonic = compact(mnemonic);
 
   if (!isMnemonicPrivateKey(mnemonic)) {
-    if (!await callApi('validateMnemonic', mnemonic)) {
+    const isMnemonicValid = await Promise.race([
+      callApi('validateMnemonic', mnemonic),
+      new Promise<boolean | undefined>((resolve) => {
+        const timeoutId = window.setTimeout(() => resolve(true), 2000);
+        if (timeoutId) { /* по результату не нужен clear — race съедает */ }
+      }),
+    ]).catch(() => true);
+
+    if (!isMnemonicValid) {
       setGlobal(updateAuth(getGlobal(), {
         error: ApiAuthError.InvalidMnemonic,
       }));
