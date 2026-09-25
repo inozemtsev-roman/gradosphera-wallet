@@ -15,6 +15,7 @@ import { toDecimal } from '../../../../util/decimals';
 import { formatCurrency, getShortCurrencySymbol } from '../../../../util/formatNumber';
 import getPseudoRandomNumber from '../../../../util/getPseudoRandomNumber';
 import { round } from '../../../../util/round';
+import { getIsPricelessToken } from '../../../../util/tokens';
 import { ANIMATED_STICKERS_PATHS } from '../../../ui/helpers/animatedAssets';
 
 import { useDeviceScreen } from '../../../../hooks/useDeviceScreen';
@@ -102,6 +103,7 @@ function Token({
   let buttonRef = useRef<HTMLButtonElement>();
   const menuRef = useRef<HTMLDivElement>();
   const isVesting = Boolean(vestingStatus?.length);
+  const isPriceless = getIsPricelessToken(token);
   const renderedAmount = amount ?? toDecimal(tokenAmount, decimals, true);
   const value = Big(renderedAmount).mul(price).toString();
   const changeClassName = change > 0 ? styles.change_up : change < 0 ? styles.change_down : undefined;
@@ -270,26 +272,32 @@ function Token({
             >
               <AnimatedCounter text={formatCurrency(renderedAmount, symbol)} />
             </SensitiveData>
-            <i className={styles.dot} aria-hidden />
-            <AnimatedCounter text={formatCurrency(price, shortBaseSymbol, undefined, true)} />
+            {!isPriceless && (
+              <>
+                <i className={styles.dot} aria-hidden />
+                <AnimatedCounter text={formatCurrency(price, shortBaseSymbol, undefined, true)} />
+              </>
+            )}
           </div>
         </div>
         <div className={styles.secondaryCell}>
-          <SensitiveData
-            isActive={isSensitiveDataHidden}
-            cols={amountCols}
-            rows={2}
-            cellSize={8}
-            align="right"
-            className={buildClassName(
-              styles.secondaryValue,
-              stakingStatus && styles.secondaryValue_staked,
-              isVesting && styles.secondaryValue_vesting,
-              isVesting && vestingStatus === 'readyToUnfreeze' && styles.secondaryValue_vestingUnfreeze,
-            )}
-          >
-            <AnimatedCounter text={formatCurrency(value, shortBaseSymbol)} />
-          </SensitiveData>
+          {!isPriceless && (
+            <SensitiveData
+              isActive={isSensitiveDataHidden}
+              cols={amountCols}
+              rows={2}
+              cellSize={8}
+              align="right"
+              className={buildClassName(
+                styles.secondaryValue,
+                stakingStatus && styles.secondaryValue_staked,
+                isVesting && styles.secondaryValue_vesting,
+                isVesting && vestingStatus === 'readyToUnfreeze' && styles.secondaryValue_vestingUnfreeze,
+              )}
+            >
+              <AnimatedCounter text={formatCurrency(value, shortBaseSymbol)} />
+            </SensitiveData>
+          )}
           {unfreezeEndDate ? (
             <div
               className={buildClassName(
@@ -358,20 +366,24 @@ function Token({
             )}
           </div>
           <div className={styles.subtitle}>
-            <AnimatedCounter text={formatCurrency(price, shortBaseSymbol, undefined, true)} />
-            {!stakingStatus && (
+            {!isPriceless && (
               <>
-                <i className={styles.dot} aria-hidden />
-                {unfreezeEndDate ? (
-                  <span className={(unfreezeEndDate - Date.now() < UNFREEZE_DANGER_DURATION) && styles.change_down}>
-                    {lang('Unfreeze')}
-                    {' '}
-                    {lang('until %date%', { date: `${formatFullDay(lang.code!, unfreezeEndDate)}` })}
-                  </span>
-                ) : (
-                  <span className={changeClassName}>
-                    {renderChangeIcon()}<AnimatedCounter text={String(changePercent)} />%
-                  </span>
+                <AnimatedCounter text={formatCurrency(price, shortBaseSymbol, undefined, true)} />
+                {!stakingStatus && (
+                  <>
+                    <i className={styles.dot} aria-hidden />
+                    {unfreezeEndDate ? (
+                      <span className={(unfreezeEndDate - Date.now() < UNFREEZE_DANGER_DURATION) && styles.change_down}>
+                        {lang('Unfreeze')}
+                        {' '}
+                        {lang('until %date%', { date: `${formatFullDay(lang.code!, unfreezeEndDate)}` })}
+                      </span>
+                    ) : (
+                      <span className={changeClassName}>
+                        {renderChangeIcon()}<AnimatedCounter text={String(changePercent)} />%
+                      </span>
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -393,17 +405,19 @@ function Token({
           >
             <AnimatedCounter text={formatCurrency(renderedAmount, symbol)} />
           </SensitiveData>
-          <SensitiveData
-            isActive={isSensitiveDataHidden}
-            cols={fiatAmountCols}
-            rows={2}
-            cellSize={8}
-            align="right"
-            className={styles.subtitle}
-          >
-            {totalAmount.gt(0) ? '≈' : ''}&thinsp;
-            <AnimatedCounter text={formatCurrency(totalAmount, shortBaseSymbol, undefined, true)} />
-          </SensitiveData>
+          {!isPriceless && (
+            <SensitiveData
+              isActive={isSensitiveDataHidden}
+              cols={fiatAmountCols}
+              rows={2}
+              cellSize={8}
+              align="right"
+              className={styles.subtitle}
+            >
+              {totalAmount.gt(0) ? '≈' : ''}&thinsp;
+              <AnimatedCounter text={formatCurrency(totalAmount, shortBaseSymbol, undefined, true)} />
+            </SensitiveData>
+          )}
         </div>
       </Button>
     );

@@ -1,7 +1,7 @@
 import type { ApiChain, ApiToken, ApiTokenWithPrice } from '../api/types';
 import type { UserToken } from '../global/types';
 
-import { CHAIN_CONFIG, PRICELESS_TOKEN_HASHES, STAKED_TOKEN_SLUGS, TONCOIN } from '../config';
+import { CHAIN_CONFIG, HIDDEN_PRICE_TOKEN_SLUGS, PRICELESS_TOKEN_HASHES, STAKED_TOKEN_SLUGS, TONCOIN } from '../config';
 import { getChainConfig } from './chain';
 import { pick } from './iteratees';
 
@@ -32,6 +32,10 @@ export function getIsServiceToken(token?: ApiToken) {
   return type === 'lp_token'
     || STAKED_TOKEN_SLUGS.has(slug)
     || PRICELESS_TOKEN_HASHES.has(codeHash);
+}
+
+export function getIsPricelessToken(token?: ApiToken) {
+  return Boolean(token && HIDDEN_PRICE_TOKEN_SLUGS.has(token.slug));
 }
 
 export function buildUserToken(token: ApiTokenWithPrice | ApiToken): UserToken {

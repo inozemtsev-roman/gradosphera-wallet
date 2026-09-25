@@ -385,6 +385,17 @@ export const TON_TSUSDE = {
     'https://cache.tonapi.io/imgproxy/vGZJ7erwsWPo7DpVG_V7ygNn7VGs0szZXcNLHB_l0ms/rs:fill:200:200:1/g:no/aHR0cHM6Ly9tZXRhZGF0YS5sYXllcnplcm8tYXBpLmNvbS9hc3NldHMvdHNVU0RlLnBuZw.webp',
 } as const;
 
+export const BLAGO = {
+  name: 'Благо',
+  symbol: 'BLG',
+  chain: 'ton',
+  slug: 'ton-eqblaryi1h',
+  decimals: 0,
+  tokenAddress: 'EQBlaryI1HCY6hIlW9giBoqKGtuMHfxlULZOhD6UyzpqLcll',
+  image: 'https://raw.githubusercontent.com/gradosphera/brand-assets/main/logo.png',
+  codeHash: 'c50a9001e6e840e8c9c9c48f7c9ca50b88526d4244b49830693c172e98e09871',
+} as const;
+
 export const ALL_STAKING_POOLS = [LIQUID_POOL, MYCOIN_STAKING_POOL, ETHENA_STAKING_VAULT, TON_TSUSDE.tokenAddress];
 
 export const DEFAULT_ENABLED_TOKEN_SLUGS = [
@@ -454,6 +465,10 @@ export const TOKEN_INFO: Record<string, ApiTokenWithPrice> = {
   },
   [TON_TSUSDE.slug]: {
     ...TON_TSUSDE,
+    ...COMMON_TOKEN,
+  },
+  [BLAGO.slug]: {
+    ...BLAGO,
     ...COMMON_TOKEN,
   },
 };
@@ -622,9 +637,12 @@ export const PRICELESS_TOKEN_HASHES = new Set([
   'eb9d9891a32ec94425c09735f6ade73f4c171da0091f874d6e9d25247d583990', // Affluent TON Lending Vault EQADQ6JcK0NMuNM5uwCcS9bjcn2RTvcxYIZjNlhIhywUrfBN
   'f66c149de251ffd031bdb34b79abe43a062ba16b815433691e3ec40a77f01d71', // Affluent Ethena Multiply Vault EQDXmtbt1-WSP00tSh6N6FH-4lX7LbnrjORClmtmuZqg4Ymm
   'bca42dbdcbc0d885aaffb1eeeb027d9f338c2dd68701a05641c1d1c3171a7400', // Affluent TON Multiply Vault EQDtxQqkgIRQQR5hWlrQxiJMtLwjR3rEYNUBbEcvPDwCs1Ng
+  'c50a9001e6e840e8c9c9c48f7c9ca50b88526d4244b49830693c172e98e09871', // Благо EQBlaryI1HCY6hIlW9giBoqKGtuMHfxlULZOhD6UyzpqLcll (1 BLG = 1 час волонтёра)
 ]);
 
 export const STAKED_TOKEN_SLUGS = new Set([STAKED_TON_SLUG, STAKED_MYCOIN_SLUG, TON_TSUSDE.slug]);
+
+export const HIDDEN_PRICE_TOKEN_SLUGS = new Set<string>([BLAGO.slug]);
 
 export const DEFAULT_OUR_SWAP_FEE = 0.875;
 
