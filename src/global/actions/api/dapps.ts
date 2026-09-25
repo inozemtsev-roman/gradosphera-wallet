@@ -4,7 +4,6 @@ import { DappConnectState, SignDataState, TransferState } from '../../types';
 
 import {
   ANIMATION_END_DELAY,
-  GRADOSPHERA_DAO_ARTICLES,
   GRADOSPHERA_DAO_CATEGORY_ID,
   GRADOSPHERA_DAO_CATEGORY_NAME,
   GRADOSPHERA_KEEP_CATEGORY_NAMES,
@@ -551,18 +550,9 @@ function applyGradospheraCatalog(
     categoryId: GRADOSPHERA_DAO_CATEGORY_ID,
   };
 
-  const articles: ApiSite[] = GRADOSPHERA_DAO_ARTICLES.map((article) => ({
-    ...article,
-    icon: GRADOSPHERA_VOTE_SITE.icon,
-    manifestUrl: '',
-    canBeRestricted: false,
-    isExternal: true,
-    isFeatured: true,
-  }));
-
   return {
     categories: [...keptCategories, daoCategory],
-    sites: [...articles, ...keptSites, voteSite],
+    sites: [...keptSites, voteSite],
   };
 }
 
