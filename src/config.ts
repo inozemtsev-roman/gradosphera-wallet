@@ -20,8 +20,8 @@ export const APP_ENV_MARKER = APP_ENV === 'staging' ? 'Beta' : APP_ENV === 'deve
 export const EXTENSION_NAME = IS_CORE_WALLET ? 'TON Wallet' : 'MyTonWallet · My TON Wallet';
 export const EXTENSION_DESCRIPTION = IS_CORE_WALLET
   ? 'Set up your own TON Wallet on The Open Network'
-  // eslint-disable-next-line @stylistic/max-len
-  : 'The most feature-rich TON+TRON wallet: multi-accounts, multi-send, Telegram Gifts and other collectibles, TON DNS+Proxy, and more.';
+  : // eslint-disable-next-line @stylistic/max-len
+    'The most feature-rich TON+TRON wallet: multi-accounts, multi-send, Telegram Gifts and other collectibles, TON DNS+Proxy, and more.';
 
 export const DEBUG = APP_ENV !== 'production' && APP_ENV !== 'perf' && APP_ENV !== 'test';
 export const DEBUG_MORE = false;
@@ -106,9 +106,11 @@ export const MAIN_ACCOUNT_ID = '0-ton-mainnet';
 // proxy (see `vercel.json`) so the CORS restriction doesn't apply.
 const IS_PLAIN_WEB_APP = !IS_CORE_WALLET && !IS_EXTENSION && !IS_PACKAGED_ELECTRON && !IS_CAPACITOR && !IS_TELEGRAM_APP;
 const PLAIN_WEB_ORIGIN = IS_PLAIN_WEB_APP
-  ? (typeof window !== 'undefined'
+  ? typeof window !== 'undefined'
     ? window.location.origin
-    : (typeof self !== 'undefined' ? self?.origin : undefined))
+    : typeof self !== 'undefined'
+      ? self?.origin
+      : undefined
   : undefined;
 
 function resolveApiUrl(envValue: string | undefined, proxyPath: string, fallbackUrl: string) {
@@ -119,28 +121,40 @@ function resolveApiUrl(envValue: string | undefined, proxyPath: string, fallback
 }
 
 export const TONCENTER_MAINNET_URL = resolveApiUrl(
-  process.env.TONCENTER_MAINNET_URL, '/toncenter', 'https://toncenter.mytonwallet.org',
+  process.env.TONCENTER_MAINNET_URL,
+  '/toncenter',
+  'https://toncenter.mytonwallet.org',
 );
 export const TONCENTER_MAINNET_KEY = process.env.TONCENTER_MAINNET_KEY;
 export const ELECTRON_TONCENTER_MAINNET_KEY = process.env.ELECTRON_TONCENTER_MAINNET_KEY;
 export const TONAPIIO_MAINNET_URL = resolveApiUrl(
-  process.env.TONAPIIO_MAINNET_URL, '/tonapiio', 'https://tonapiio.mytonwallet.org',
+  process.env.TONAPIIO_MAINNET_URL,
+  '/tonapiio',
+  'https://tonapiio.mytonwallet.org',
 );
 
 export const TONCENTER_TESTNET_URL = resolveApiUrl(
-  process.env.TONCENTER_TESTNET_URL, '/toncenter-testnet', 'https://toncenter-testnet.mytonwallet.org',
+  process.env.TONCENTER_TESTNET_URL,
+  '/toncenter-testnet',
+  'https://toncenter-testnet.mytonwallet.org',
 );
 export const TONCENTER_TESTNET_KEY = process.env.TONCENTER_TESTNET_KEY;
 export const ELECTRON_TONCENTER_TESTNET_KEY = process.env.ELECTRON_TONCENTER_TESTNET_KEY;
 export const TONAPIIO_TESTNET_URL = resolveApiUrl(
-  process.env.TONAPIIO_TESTNET_URL, '/tonapiio-testnet', 'https://tonapiio-testnet.mytonwallet.org',
+  process.env.TONAPIIO_TESTNET_URL,
+  '/tonapiio-testnet',
+  'https://tonapiio-testnet.mytonwallet.org',
 );
 
 export const BRILLIANT_API_BASE_URL = resolveApiUrl(
-  process.env.BRILLIANT_API_BASE_URL, '/mtw-api', 'https://api.mytonwallet.org',
+  process.env.BRILLIANT_API_BASE_URL,
+  '/mtw-api',
+  'https://api.mytonwallet.org',
 );
 export const PROXY_API_BASE_URL = resolveApiUrl(
-  process.env.PROXY_API_BASE_URL, '/mtw-api/proxy', 'https://api.mytonwallet.org/proxy',
+  process.env.PROXY_API_BASE_URL,
+  '/mtw-api/proxy',
+  'https://api.mytonwallet.org/proxy',
 );
 export const IPFS_GATEWAY_BASE_URL = 'https://ipfs.io/ipfs/';
 export const SSE_BRIDGE_URL = IS_PLAIN_WEB_APP
@@ -148,10 +162,14 @@ export const SSE_BRIDGE_URL = IS_PLAIN_WEB_APP
   : process.env.SSE_BRIDGE_URL || 'https://tonconnectbridge.mytonwallet.org/bridge/';
 
 export const TRON_MAINNET_API_URL = resolveApiUrl(
-  process.env.TRON_MAINNET_API_URL, '/tronapi', 'https://tronapi.mytonwallet.org',
+  process.env.TRON_MAINNET_API_URL,
+  '/tronapi',
+  'https://tronapi.mytonwallet.org',
 );
 export const TRON_TESTNET_API_URL = resolveApiUrl(
-  process.env.TRON_TESTNET_API_URL, '/tronapi-testnet', 'https://api.shasta.trongrid.io',
+  process.env.TRON_TESTNET_API_URL,
+  '/tronapi-testnet',
+  'https://api.shasta.trongrid.io',
 );
 
 export const FRACTION_DIGITS = 9;
@@ -179,9 +197,7 @@ export const GETGEMS_BASE_MAINNET_URL = 'https://getgems.io/';
 export const GETGEMS_BASE_TESTNET_URL = 'https://testnet.getgems.io/';
 export const EMPTY_HASH_VALUE = 'NOHASH';
 
-export const IFRAME_WHITELIST = [
-  'http://localhost:*', 'https://tonscan.org',
-];
+export const IFRAME_WHITELIST = ['http://localhost:*', 'https://tonscan.org'];
 export const SUBPROJECT_URL_MASK = 'https://*.mytonwallet.io';
 
 export const CHANGELLY_SUPPORT_EMAIL = 'support@changelly.com';
@@ -199,12 +215,14 @@ export const TINY_TRANSFER_MAX_COST = 0.01;
 export const IMAGE_CACHE_NAME = 'mtw-image';
 export const LANG_CACHE_NAME = 'mtw-lang-227';
 
-export const LANG_LIST: LangItem[] = [{
-  langCode: 'ru',
-  name: 'Russian',
-  nativeName: 'Русский',
-  rtl: false,
-}];
+export const LANG_LIST: LangItem[] = [
+  {
+    langCode: 'ru',
+    name: 'Russian',
+    nativeName: 'Русский',
+    rtl: false,
+  },
+];
 
 export const IS_STAKING_DISABLED = IS_CORE_WALLET;
 export const VALIDATION_PERIOD_MS = 65_536_000; // 18.2 h.
@@ -226,23 +244,11 @@ export const EMBEDDED_DAPP_BRIDGE_CHANNEL = 'embedded-dapp-bridge';
 export const GRADOSPHERA_DAO_CATEGORY_ID = 100;
 export const GRADOSPHERA_DAO_CATEGORY_NAME = 'ДАО';
 export const GRADOSPHERA_VOTE_SITE = {
-  url: 'https://t.me/gradosphera_vote_bot/vote',
+  url: 'https://blago-vote.vercel.app',
   name: 'Голос',
   icon: 'https://raw.githubusercontent.com/gradosphera/blago-vote/refs/heads/main/public/vote.png',
   description: 'Голосование',
 };
-export const GRADOSPHERA_DAO_ARTICLES = [
-  {
-    url: 'https://t.me/gradosphera_vote_bot/vote',
-    name: 'Как создать ДАО',
-    description: 'Статья',
-  },
-  {
-    url: 'https://t.me/gradosphera_vote_bot/vote',
-    name: 'Как получить жетон благо',
-    description: 'Статья',
-  },
-];
 export const GRADOSPHERA_KEEP_CATEGORY_NAMES = ['DYOR', 'Utilities'];
 
 export const NFT_FRAGMENT_COLLECTIONS = [
@@ -327,16 +333,12 @@ export const MYCOIN_STAKING_POOL = 'EQC3roTiRRsoLzfYVK7yVVoIZjTEqAjQU3ju7aQ7HWTV
 export const ETHENA_STAKING_VAULT = 'EQChGuD1u0e7KUWHH5FaYh_ygcLXhsdG2nSHPXHW8qqnpZXW';
 export const ETHENA_STAKING_MIN_AMOUNT = 1_000_000; // 1 USDe
 // eslint-disable-next-line @stylistic/max-len
-export const ETHENA_ELIGIBILITY_CHECK_URL = 'https://t.me/id_app/start?startapp=cQeewNnc3pVphUcwY63WruKMQDpgePd1E7eMVoqphMZAdGoU9jwS4qRqrM1kSeaqrAiiDiC3EYAJPwZDGWqxZpw5vtGxmHma59XEt';
+export const ETHENA_ELIGIBILITY_CHECK_URL =
+  'https://t.me/id_app/start?startapp=cQeewNnc3pVphUcwY63WruKMQDpgePd1E7eMVoqphMZAdGoU9jwS4qRqrM1kSeaqrAiiDiC3EYAJPwZDGWqxZpw5vtGxmHma59XEt';
 
 // In cross-chain swaps, only a few TON/TRON tokens are available.
 // It’s not optimal to request swap history for all the others.
-export const SWAP_CROSSCHAIN_SLUGS = new Set([
-  TONCOIN.slug,
-  TON_USDT_SLUG,
-  TRX.slug,
-  TRC20_USDT_MAINNET_SLUG,
-]);
+export const SWAP_CROSSCHAIN_SLUGS = new Set([TONCOIN.slug, TON_USDT_SLUG, TRX.slug, TRC20_USDT_MAINNET_SLUG]);
 
 export const STON_PTON_ADDRESS = 'EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez';
 export const STON_PTON_SLUG = 'ton-eqcm3b12qk';
@@ -367,7 +369,8 @@ export const TON_USDE = {
   slug: 'ton-eqaib6kmdf',
   decimals: 6,
   // eslint-disable-next-line @stylistic/max-len
-  image: 'https://imgproxy.toncenter.com/binMwUmcnFtjvgjp4wSEbsECXwfXUwbPkhVvsvpubNw/pr:small/aHR0cHM6Ly9tZXRhZGF0YS5sYXllcnplcm8tYXBpLmNvbS9hc3NldHMvVVNEZS5wbmc',
+  image:
+    'https://imgproxy.toncenter.com/binMwUmcnFtjvgjp4wSEbsECXwfXUwbPkhVvsvpubNw/pr:small/aHR0cHM6Ly9tZXRhZGF0YS5sYXllcnplcm8tYXBpLmNvbS9hc3NldHMvVVNEZS5wbmc',
 } as const;
 
 export const TON_TSUSDE = {
@@ -378,26 +381,24 @@ export const TON_TSUSDE = {
   slug: 'ton-eqdq5uuyph',
   decimals: 6,
   // eslint-disable-next-line @stylistic/max-len
-  image: 'https://cache.tonapi.io/imgproxy/vGZJ7erwsWPo7DpVG_V7ygNn7VGs0szZXcNLHB_l0ms/rs:fill:200:200:1/g:no/aHR0cHM6Ly9tZXRhZGF0YS5sYXllcnplcm8tYXBpLmNvbS9hc3NldHMvdHNVU0RlLnBuZw.webp',
+  image:
+    'https://cache.tonapi.io/imgproxy/vGZJ7erwsWPo7DpVG_V7ygNn7VGs0szZXcNLHB_l0ms/rs:fill:200:200:1/g:no/aHR0cHM6Ly9tZXRhZGF0YS5sYXllcnplcm8tYXBpLmNvbS9hc3NldHMvdHNVU0RlLnBuZw.webp',
 } as const;
 
-export const ALL_STAKING_POOLS = [
-  LIQUID_POOL,
-  MYCOIN_STAKING_POOL,
-  ETHENA_STAKING_VAULT,
-  TON_TSUSDE.tokenAddress,
-];
+export const ALL_STAKING_POOLS = [LIQUID_POOL, MYCOIN_STAKING_POOL, ETHENA_STAKING_VAULT, TON_TSUSDE.tokenAddress];
 
 export const DEFAULT_ENABLED_TOKEN_SLUGS = [
-  TONCOIN.slug, TON_USDT_SLUG, TRX.slug, TRC20_USDT_TESTNET_SLUG, TRC20_USDT_MAINNET_SLUG,
+  TONCOIN.slug,
+  TON_USDT_SLUG,
+  TRX.slug,
+  TRC20_USDT_TESTNET_SLUG,
+  TRC20_USDT_MAINNET_SLUG,
 ] as string[];
 
 // Toncoin, USDT TON, TRX, USDT TRC20
 export const DEFAULT_ENABLED_TOKEN_COUNT = 4;
 
-export const PRIORITY_TOKEN_SLUGS = [
-  TONCOIN.slug, TON_USDT_SLUG, TRX.slug,
-] as string[];
+export const PRIORITY_TOKEN_SLUGS = [TONCOIN.slug, TON_USDT_SLUG, TRX.slug] as string[];
 
 const COMMON_TOKEN = {
   isFromBackend: true,
@@ -418,13 +419,15 @@ export const TOKEN_INFO: Record<string, ApiTokenWithPrice> = {
     ...TRX,
     ...COMMON_TOKEN,
   },
-  [TRC20_USDT_MAINNET_SLUG]: { // mainnet
+  [TRC20_USDT_MAINNET_SLUG]: {
+    // mainnet
     ...TRC20_USDT,
     slug: TRC20_USDT_MAINNET_SLUG,
     tokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
     ...COMMON_TOKEN,
   },
-  [TRC20_USDT_TESTNET_SLUG]: { // testnet
+  [TRC20_USDT_TESTNET_SLUG]: {
+    // testnet
     ...TRC20_USDT,
     slug: TRC20_USDT_TESTNET_SLUG,
     tokenAddress: 'TG3XXyExBkPp9nzdajDZsozEu4BkaSJozs',
@@ -433,14 +436,16 @@ export const TOKEN_INFO: Record<string, ApiTokenWithPrice> = {
   [TON_USDT_SLUG]: {
     ...TON_USDT,
     // eslint-disable-next-line @stylistic/max-len
-    image: 'https://cache.tonapi.io/imgproxy/T3PB4s7oprNVaJkwqbGg54nexKE0zzKhcrPv8jcWYzU/rs:fill:200:200:1/g:no/aHR0cHM6Ly90ZXRoZXIudG8vaW1hZ2VzL2xvZ29DaXJjbGUucG5n.webp',
+    image:
+      'https://cache.tonapi.io/imgproxy/T3PB4s7oprNVaJkwqbGg54nexKE0zzKhcrPv8jcWYzU/rs:fill:200:200:1/g:no/aHR0cHM6Ly90ZXRoZXIudG8vaW1hZ2VzL2xvZ29DaXJjbGUucG5n.webp',
     slug: TON_USDT_SLUG,
     ...COMMON_TOKEN,
   },
   [MYCOIN.slug]: {
     ...MYCOIN,
     // eslint-disable-next-line @stylistic/max-len
-    image: 'https://cache.tonapi.io/imgproxy/Qy038wCBKISofJ0hYMlj6COWma330cx3Ju1ZSPM2LRU/rs:fill:200:200:1/g:no/aHR0cHM6Ly9teXRvbndhbGxldC5pby9sb2dvLTI1Ni1ibHVlLnBuZw.webp',
+    image:
+      'https://cache.tonapi.io/imgproxy/Qy038wCBKISofJ0hYMlj6COWma330cx3Ju1ZSPM2LRU/rs:fill:200:200:1/g:no/aHR0cHM6Ly9teXRvbndhbGxldC5pby9sb2dvLTI1Ni1ibHVlLnBuZw.webp',
     ...COMMON_TOKEN,
   },
   [TON_USDE.slug]: {
@@ -477,7 +482,8 @@ export const INIT_SWAP_ASSETS: Record<string, ApiSwapAsset> = {
     slug: TON_USDT_SLUG,
     decimals: 9,
     // eslint-disable-next-line @stylistic/max-len
-    image: 'https://cache.tonapi.io/imgproxy/T3PB4s7oprNVaJkwqbGg54nexKE0zzKhcrPv8jcWYzU/rs:fill:200:200:1/g:no/aHR0cHM6Ly90ZXRoZXIudG8vaW1hZ2VzL2xvZ29DaXJjbGUucG5n.webp',
+    image:
+      'https://cache.tonapi.io/imgproxy/T3PB4s7oprNVaJkwqbGg54nexKE0zzKhcrPv8jcWYzU/rs:fill:200:200:1/g:no/aHR0cHM6Ly90ZXRoZXIudG8vaW1hZ2VzL2xvZ29DaXJjbGUucG5n.webp',
     tokenAddress: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
     price: 0,
     priceUsd: 0,
@@ -564,9 +570,11 @@ export const MINT_CARD_COMMENT = 'Mint card';
 export const MINT_CARD_REFUND_COMMENT = 'Refund';
 
 // eslint-disable-next-line @stylistic/max-len
-export const RE_LINK_TEMPLATE = /((ftp|https?):\/\/)?(?<host>(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z][-a-zA-Z0-9]{1,62})\b([-a-zA-Z0-9()@:%_+.,~#?&/=]*)/g;
+export const RE_LINK_TEMPLATE =
+  /((ftp|https?):\/\/)?(?<host>(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z][-a-zA-Z0-9]{1,62})\b([-a-zA-Z0-9()@:%_+.,~#?&/=]*)/g;
 // eslint-disable-next-line @stylistic/max-len
-export const RE_TG_BOT_MENTION = /telegram[:\s-]*((@[a-z0-9_]+)|(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/[a-z0-9_]+)/mig;
+export const RE_TG_BOT_MENTION =
+  /telegram[:\s-]*((@[a-z0-9_]+)|(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/[a-z0-9_]+)/gim;
 
 export const STARS_SYMBOL = '⭐️';
 
@@ -616,11 +624,7 @@ export const PRICELESS_TOKEN_HASHES = new Set([
   'bca42dbdcbc0d885aaffb1eeeb027d9f338c2dd68701a05641c1d1c3171a7400', // Affluent TON Multiply Vault EQDtxQqkgIRQQR5hWlrQxiJMtLwjR3rEYNUBbEcvPDwCs1Ng
 ]);
 
-export const STAKED_TOKEN_SLUGS = new Set([
-  STAKED_TON_SLUG,
-  STAKED_MYCOIN_SLUG,
-  TON_TSUSDE.slug,
-]);
+export const STAKED_TOKEN_SLUGS = new Set([STAKED_TON_SLUG, STAKED_MYCOIN_SLUG, TON_TSUSDE.slug]);
 
 export const DEFAULT_OUR_SWAP_FEE = 0.875;
 
