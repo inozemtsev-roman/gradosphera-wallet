@@ -1,8 +1,16 @@
-import type { ApiDappConnectionType } from '../../../api/types';
+import type { ApiDappConnectionType, ApiSite, ApiSiteCategory } from '../../../api/types';
 import type { GlobalState } from '../../types';
 import { DappConnectState, SignDataState, TransferState } from '../../types';
 
-import { ANIMATION_END_DELAY, IS_CAPACITOR } from '../../../config';
+import {
+  ANIMATION_END_DELAY,
+  GRADOSPHERA_DAO_ARTICLES,
+  GRADOSPHERA_DAO_CATEGORY_ID,
+  GRADOSPHERA_DAO_CATEGORY_NAME,
+  GRADOSPHERA_KEEP_CATEGORY_NAMES,
+  GRADOSPHERA_VOTE_SITE,
+  IS_CAPACITOR,
+} from '../../../config';
 import { areDeepEqual } from '../../../util/areDeepEqual';
 import { getDoesUsePinPad } from '../../../util/biometrics';
 import { getDappConnectionUniqueId } from '../../../util/getDappConnectionUniqueId';
@@ -520,6 +528,44 @@ addActionHandler('apiUpdateDappCloseLoading', async (global, actions, { connecti
   setGlobal(global);
 });
 
+function applyGradospheraCatalog(
+  exploreData?: { categories: ApiSiteCategory[]; sites: ApiSite[] },
+): { categories: ApiSiteCategory[]; sites: ApiSite[] } {
+  const serverCategories = exploreData?.categories || [];
+  const serverSites = exploreData?.sites || [];
+
+  const keptCategories = serverCategories.filter(({ name }) => GRADOSPHERA_KEEP_CATEGORY_NAMES.includes(name));
+  const keptCategoryIds = new Set(keptCategories.map(({ id }) => id));
+
+  const keptSites = serverSites
+    .filter((site) => site.categoryId !== undefined && keptCategoryIds.has(site.categoryId))
+    .map((site) => ({ ...site, isFeatured: false }));
+
+  const daoCategory: ApiSiteCategory = { id: GRADOSPHERA_DAO_CATEGORY_ID, name: GRADOSPHERA_DAO_CATEGORY_NAME };
+  const voteSite: ApiSite = {
+    ...GRADOSPHERA_VOTE_SITE,
+    manifestUrl: '',
+    canBeRestricted: false,
+    isExternal: true,
+    isFeatured: false,
+    categoryId: GRADOSPHERA_DAO_CATEGORY_ID,
+  };
+
+  const articles: ApiSite[] = GRADOSPHERA_DAO_ARTICLES.map((article) => ({
+    ...article,
+    icon: GRADOSPHERA_VOTE_SITE.icon,
+    manifestUrl: '',
+    canBeRestricted: false,
+    isExternal: true,
+    isFeatured: true,
+  }));
+
+  return {
+    categories: [...keptCategories, daoCategory],
+    sites: [...articles, ...keptSites, voteSite],
+  };
+}
+
 addActionHandler('loadExploreSites', async (global, _, { isLandscape }) => {
   const exploreData = await callApi('loadExploreSites', { isLandscape });
   global = getGlobal();
@@ -527,7 +573,7 @@ addActionHandler('loadExploreSites', async (global, _, { isLandscape }) => {
     return;
   }
 
-  global = { ...global, exploreData };
+  global = { ...global, exploreData: applyGradospheraCatalog(exploreData) };
   setGlobal(global);
 });
 

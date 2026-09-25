@@ -223,6 +223,28 @@ export const TONCONNECT_PROTOCOL_VERSION = 2;
 export const TONCONNECT_WALLET_JSBRIDGE_KEY = IS_CORE_WALLET ? 'tonwallet' : 'mytonwallet';
 export const EMBEDDED_DAPP_BRIDGE_CHANNEL = 'embedded-dapp-bridge';
 
+export const GRADOSPHERA_DAO_CATEGORY_ID = 100;
+export const GRADOSPHERA_DAO_CATEGORY_NAME = 'ДАО';
+export const GRADOSPHERA_VOTE_SITE = {
+  url: 'https://t.me/gradosphera_vote_bot/vote',
+  name: 'Голос',
+  icon: 'https://raw.githubusercontent.com/gradosphera/blago-vote/refs/heads/main/public/vote.png',
+  description: 'Голосование',
+};
+export const GRADOSPHERA_DAO_ARTICLES = [
+  {
+    url: 'https://t.me/gradosphera_vote_bot/vote',
+    name: 'Как создать ДАО',
+    description: 'Статья',
+  },
+  {
+    url: 'https://t.me/gradosphera_vote_bot/vote',
+    name: 'Как получить жетон благо',
+    description: 'Статья',
+  },
+];
+export const GRADOSPHERA_KEEP_CATEGORY_NAMES = ['DYOR', 'Utilities'];
+
 export const NFT_FRAGMENT_COLLECTIONS = [
   '0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2', // Anonymous Telegram Numbers
   '0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2', // Telegram Usernames
