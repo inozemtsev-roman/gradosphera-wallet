@@ -1,3 +1,0 @@
-# Netlify redirect rules
-/get/*  https://get.gramwallet.io/:splat  302
-/*      /index.html                        200
