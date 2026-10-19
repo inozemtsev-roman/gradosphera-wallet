@@ -6,7 +6,7 @@ import { callBackendGet } from '../common/backend';
 import { connectUpdater, disconnectUpdater, startStorageMigration } from '../common/helpers';
 import { setEnvironment } from '../environment';
 import { addHooks } from '../hooks';
-import { storage } from '../storages';
+import { storage, configureTelegramCloudStorage } from '../storages';
 import * as tonConnect from '../tonConnect';
 import * as tonConnectSse from '../tonConnect/sse';
 import { destroyPolling } from './polling';
@@ -22,6 +22,8 @@ export default async function init(onUpdate: OnApiUpdate, args: ApiInitArgs) {
   const environment = setEnvironment(args);
 
   initWindowConnector();
+
+  configureTelegramCloudStorage();
 
   methods.initAccounts(onUpdate);
   methods.initPolling(onUpdate);
