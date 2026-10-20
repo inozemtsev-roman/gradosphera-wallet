@@ -48,7 +48,7 @@ import { bigintDivideToNumber } from '../../util/bigint';
 import { fetchJsonWithProxy } from '../../util/fetch';
 import { getDappConnectionUniqueId } from '../../util/getDappConnectionUniqueId';
 import { pick } from '../../util/iteratees';
-import { logDebugError } from '../../util/logs';
+import { logDebug, logDebugError } from '../../util/logs';
 import safeExec from '../../util/safeExec';
 import { getTonConnectMaxMessages, tonConnectGetDeviceInfo } from '../../util/tonConnectEnvironment';
 import chains from '../chains';
@@ -733,8 +733,10 @@ async function performSignData(
 }
 
 export async function fetchDappMetadata(manifestUrl: string): Promise<ApiDappMetadata> {
+  const resolvedManifestUrl = resolveDappManifestUrl(manifestUrl);
+
   try {
-    const { url, name, iconUrl } = await fetchJsonWithProxy(manifestUrl);
+    const { url, name, iconUrl } = await fetchJsonWithProxy(resolvedManifestUrl);
     const safeIconUrl = (iconUrl.startsWith('data:') || iconUrl === '') ? BLANK_GIF_DATA_URL : iconUrl;
     if (!isValidUrl(url) || !isValidString(name) || !isValidUrl(safeIconUrl)) {
       throw new Error('Invalid data');
@@ -744,12 +746,42 @@ export async function fetchDappMetadata(manifestUrl: string): Promise<ApiDappMet
       url,
       name,
       iconUrl: safeIconUrl,
-      manifestUrl,
+      manifestUrl: resolvedManifestUrl,
     };
   } catch (err) {
     logDebugError('fetchDapp', err);
     throw new errors.ManifestContentError();
   }
+}
+
+// Старые сборки dApp передавали относительный manifestUrl (например
+// `/api/tonconnect-manifest?origin=...`): кошелёк не может его открыть,
+// origin dApp ему неизвестен. Однако origin зашит внутри manifestUrl
+// query-параметром `origin` — восстанавливаем абсолютный URL по нему.
+function resolveDappManifestUrl(manifestUrl: string): string {
+  try {
+    new URL(manifestUrl);
+    return manifestUrl;
+  } catch {
+    // Относительный URL — разбираем ниже.
+  }
+
+  const queryIndex = manifestUrl.indexOf('?');
+  const origin = queryIndex >= 0
+    ? new URLSearchParams(manifestUrl.slice(queryIndex + 1)).get('origin')
+    : undefined;
+
+  if (origin) {
+    try {
+      const resolved = new URL(manifestUrl, origin).toString();
+      logDebug('fetchDapp: resolved relative manifestUrl to', resolved);
+      return resolved;
+    } catch (err) {
+      logDebugError('resolveDappManifestUrl', err);
+    }
+  }
+
+  return manifestUrl;
 }
 
 async function ensureRequestParams(

@@ -84,11 +84,82 @@ export function processDeeplink(url: string, isFromInAppBrowser = false): Promis
 
 // Processes a TonConnect universal link provided when the app is launched with parameters
 export function processLaunchDeeplink() {
+  const startApp = extractTonConnectStartApp();
+  if (startApp) {
+    return processTonConnectStartApp(startApp);
+  }
+
   const url = forceHttpsProtocol(window.location.href);
   if (isTonConnectDeeplink(url) || isSelfDeeplink(url)) {
     return processDeeplink(url);
   }
   return false;
+}
+
+const TONCONNECT_STARTAPP_PREFIX = 'tonconnect-';
+
+// Telegram Mini App запускается по universal-ссылке вида
+// `t.me/<bot>/<app>?startapp=tonconnect-<encoded>`, где payload — это
+// query-строка `v=2&id=...&trace_id=...&r={ConnectRequest}&ret=...`,
+// кодированная encodeTelegramUrlParameters из @tonconnect/sdk
+// (`.`→`%2E`, `-`→`%2D`, `_`→`%5F`, `&`→`-`, `=`→`__`, `%`→`--`).
+// В @tonconnect/sdk 3.1.0 обратной decodeTelegramUrlParameters нет,
+// поэтому функция продублирована (как в новых версиях SDK).
+function decodeTelegramUrlParameters(parameters: string) {
+  return parameters
+    .replaceAll('--', '%')
+    .replaceAll('__', '=')
+    .replaceAll('-', '&')
+    .replaceAll('%5F', '_')
+    .replaceAll('%2D', '-')
+    .replaceAll('%2E', '.');
+}
+
+// TonConnect-запрос может прийти двумя способами: query-параметром `startapp`
+// в URL запущенного Mini App (Telegram добавляет его при открытии по ссылке) или
+// полем `start_param` в initData — в зависимости от клиента/версии Telegram.
+function extractTonConnectStartApp(): string | undefined {
+  try {
+    const fromUrl = new URL(forceHttpsProtocol(window.location.href))
+      .searchParams.get('startapp');
+    if (fromUrl?.startsWith(TONCONNECT_STARTAPP_PREFIX)) {
+      return fromUrl;
+    }
+  } catch (err) {
+    logDebugError('extractTonConnectStartApp url', err);
+  }
+
+  try {
+    const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+    if (startParam?.startsWith(TONCONNECT_STARTAPP_PREFIX)) {
+      return startParam;
+    }
+  } catch (err) {
+    logDebugError('extractTonConnectStartApp start_param', err);
+  }
+
+  return undefined;
+}
+
+// Декодирует startapp и превращает его в URL вида
+// `https://<origin>/?v=...&id=...&r=...`, который понимает
+// isUniversalTonConnectUrl / startSseConnection, затем обрабатывает как
+// обычный TonConnect universal link.
+function processTonConnectStartApp(startApp: string): Promise<boolean> {
+  const decoded = decodeTelegramUrlParameters(startApp.slice(TONCONNECT_STARTAPP_PREFIX.length));
+
+  try {
+    const url = new URL(window.location.origin);
+    for (const [key, value] of new URLSearchParams(decoded)) {
+      url.searchParams.set(key, value);
+    }
+
+    logDebug('TonConnect startapp launch:', url.toString());
+    return processDeeplink(url.toString());
+  } catch (err) {
+    logDebugError('processTonConnectStartApp', err);
+    return Promise.resolve(false);
+  }
 }
 
 export function isTonDeeplink(url: string) {
