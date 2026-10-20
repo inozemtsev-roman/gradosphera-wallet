@@ -491,6 +491,11 @@ function migrateCache(cached: GlobalState, initialState: GlobalState) {
     cached.stateVersion = 44;
   }
 
+  if (cached.stateVersion === 44) {
+    cached.settings.animationLevel = initialState.settings.animationLevel;
+    cached.stateVersion = 45;
+  }
+
   // When adding migration here, increase `STATE_VERSION`
 }
 

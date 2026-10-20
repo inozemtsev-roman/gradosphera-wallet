@@ -25,8 +25,8 @@ import Menu from '../../../ui/Menu';
 import menuStyles from '../../../ui/Dropdown.module.scss';
 import styles from './Card.module.scss';
 
-import multichainIconSrc from '../../../../assets/multichain_account.svg';
 import telegramWalletIconSrc from '../../../../assets/font-icons/telegram.svg';
+import multichainIconSrc from '../../../../assets/multichain_account.svg';
 
 interface StateProps {
   addressByChain?: Account['addressByChain'];
@@ -130,7 +130,7 @@ function CardAddress({
     const contractName = getWalletContractName(walletVersion);
     if (!contractName) return undefined;
 
-    return <span className={buildClassName(styles.addressLabel, styles.versionBadge)}>{contractName}</span>;
+    return <span className={styles.addressLabel}>{contractName}</span>;
   }
 
   function getAccountChainIcon(chain: ApiChain) {
