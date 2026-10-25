@@ -5,8 +5,24 @@ import capacitorStorage from './capacitorStorage';
 import extensionStorage from './extension';
 import idb from './idb';
 import localStorage from './localStorage';
+import { telegramCloudStorage, isTelegramCloudStorageAvailable } from './telegramCloud';
 
-export const storage = IS_EXTENSION ? extensionStorage : IS_CAPACITOR ? capacitorStorage : idb;
+export let storage = IS_EXTENSION ? extensionStorage : IS_CAPACITOR ? capacitorStorage : idb;
+
+export function setStorage(backend: Storage) {
+  storage = backend;
+}
+
+export async function configureTelegramCloudStorage() {
+  if (IS_EXTENSION || IS_CAPACITOR) {
+    return;
+  }
+  if (!(await isTelegramCloudStorageAvailable())) {
+    return;
+  }
+
+  setStorage(telegramCloudStorage);
+}
 
 export default {
   [StorageType.IndexedDb]: idb,
